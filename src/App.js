@@ -38,16 +38,12 @@ module.exports = function update(prevState, changes) {
   findSetCommand(changes);
 
   function makeNextState(changedValue, nestedPropList) {
-    for (let i = nestedPropList.length - 1; i >= 0; i--) {
-      if (i === nestedPropList.length - 1) {
-        obj[nestedPropList[i]] = changedValue;
-      } else {
-        let outer = {};
-        outer[nestedPropList[i]] = obj;
-        obj = outer;
-      }
-    }
-
+    let obj = nestedPropList.reduceRight(
+      (changedValue, nestedPropList) => ({
+        [nestedPropList]: changedValue
+      }),
+      changedValue
+    );
     return obj;
   }
   let nextState = makeNextState(value, propList);
